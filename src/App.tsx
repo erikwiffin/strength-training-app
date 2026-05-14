@@ -21,10 +21,6 @@ function App() {
 
   const plan = planWorkout(data.settings, data.workoutLogs);
   const activeWorkout = data.workoutLogs.find((l) => l.completedAt === null);
-  const showBottomNav =
-    view.name === "today" ||
-    view.name === "history" ||
-    view.name === "settings";
 
   function handleStartWorkout() {
     const log = createWorkoutLog(plan, data.settings.weightUnit);
@@ -117,7 +113,7 @@ function App() {
   return (
     <div className="max-w-[600px] mx-auto px-3 pt-2 pb-20">
       {renderView()}
-      {showBottomNav && <BottomNav current={view.name} onNavigate={setView} />}
+      <BottomNav current={view.name} onNavigate={setView} />
     </div>
   );
 }
