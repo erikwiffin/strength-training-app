@@ -1,9 +1,30 @@
 import { useRef, useState } from "react";
-import type { ExerciseConfig, ExerciseId, UserSettings } from "../../types";
-import { exportData, importData } from "../../services/storage";
+import type {
+  ExerciseConfig,
+  ExerciseId,
+  UserSettings,
+  WeightUnit,
+} from "../../types";
+import {
+  exportData,
+  importData,
+  loadData,
+  saveData,
+} from "../../services/storage";
 import { ExerciseSettingsCard } from "./ExerciseSettingsCard";
 import { Screen } from "../layout/Screen";
 import { Header } from "../layout/Header";
+
+const CONVERSION_RATIO = 2.25;
+
+function roundToNearest(value: number, step: number) {
+  return Math.round(value / step) * step;
+}
+
+function convertWeight(value: number, toUnit: WeightUnit) {
+  if (toUnit === "kg") return roundToNearest(value / CONVERSION_RATIO, 2.5);
+  return roundToNearest(value * CONVERSION_RATIO, 5);
+}
 
 interface SettingsViewProps {
   settings: UserSettings;
@@ -23,12 +44,29 @@ export function SettingsView({
   onUpdateSettings,
 }: SettingsViewProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const clearHistoryModalRef = useRef<HTMLDialogElement>(null);
   const [importError, setImportError] = useState<string | null>(null);
 
   function handleUnitChange() {
-    onUpdateSettings({
-      weightUnit: settings.weightUnit === "lb" ? "kg" : "lb",
-    });
+    const newUnit = settings.weightUnit === "lb" ? "kg" : "lb";
+    const convertedExercises = Object.fromEntries(
+      Object.entries(settings.exercises).map(([id, config]) => [
+        id,
+        {
+          ...config,
+          startWeight: convertWeight(config.startWeight, newUnit),
+          increment: convertWeight(config.increment, newUnit),
+        },
+      ]),
+    ) as UserSettings["exercises"];
+    onUpdateSettings({ weightUnit: newUnit, exercises: convertedExercises });
+  }
+
+  function handleClearHistory() {
+    const data = loadData();
+    saveData({ ...data, workoutLogs: [] });
+    clearHistoryModalRef.current?.close();
+    window.location.reload();
   }
 
   function handleExerciseChange(updated: ExerciseConfig) {
@@ -119,14 +157,12 @@ export function SettingsView({
 
       <h2 className="text-lg font-bold">Data</h2>
       <div className="space-y-2">
-        <div className="flex gap-3">
-          <button className="btn btn-outline flex-1" onClick={handleExport}>
-            Export Backup
-          </button>
-          <button className="btn btn-outline flex-1" onClick={handleImport}>
-            Import Backup
-          </button>
-        </div>
+        <button className="btn btn-outline w-full" onClick={handleExport}>
+          Export Backup
+        </button>
+        <button className="btn btn-outline w-full" onClick={handleImport}>
+          Import Backup
+        </button>
         <input
           ref={fileInputRef}
           type="file"
@@ -139,7 +175,31 @@ export function SettingsView({
             <span>{importError}</span>
           </div>
         )}
+        <button
+          className="btn btn-error btn-outline w-full"
+          onClick={() => clearHistoryModalRef.current?.showModal()}
+        >
+          Clear History
+        </button>
       </div>
+
+      <dialog ref={clearHistoryModalRef} className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Clear History</h3>
+          <p className="py-4">
+            This will permanently delete all workout logs. This cannot be
+            undone.
+          </p>
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Cancel</button>
+            </form>
+            <button className="btn btn-error" onClick={handleClearHistory}>
+              Clear History
+            </button>
+          </div>
+        </div>
+      </dialog>
     </Screen>
   );
 }

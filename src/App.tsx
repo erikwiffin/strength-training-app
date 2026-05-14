@@ -27,7 +27,7 @@ function App() {
     view.name === "settings";
 
   function handleStartWorkout() {
-    const log = createWorkoutLog(plan);
+    const log = createWorkoutLog(plan, data.settings.weightUnit);
     saveWorkoutLog(log);
     setView({ name: "active-workout", workoutLogId: log.id });
   }

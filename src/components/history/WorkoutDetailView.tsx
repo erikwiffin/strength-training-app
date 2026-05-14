@@ -35,7 +35,7 @@ export function WorkoutDetailView({
               <div className="flex justify-between items-center">
                 <h3 className="card-title text-base">{exercise.label}</h3>
                 <span className="text-lg font-bold">
-                  {exercise.actualWeight} {weightUnit}
+                  {exercise.actualWeight} {workout.weightUnit ?? weightUnit}
                 </span>
               </div>
               <div className="flex gap-2 justify-center">
@@ -58,7 +58,7 @@ export function WorkoutDetailView({
               </div>
               {!allSuccess && (
                 <p className="text-sm text-warning text-center">
-                  Weight will stay at {exercise.actualWeight} {weightUnit} next
+                  Weight will stay at {exercise.actualWeight} {workout.weightUnit ?? weightUnit} next
                   time
                 </p>
               )}

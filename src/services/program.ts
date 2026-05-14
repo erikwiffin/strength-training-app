@@ -85,11 +85,12 @@ export function planWorkout(settings: UserSettings, logs: WorkoutLog[]): Planned
   };
 }
 
-export function createWorkoutLog(plan: PlannedWorkout): WorkoutLog {
+export function createWorkoutLog(plan: PlannedWorkout, weightUnit: WeightUnit): WorkoutLog {
   return {
     id: crypto.randomUUID(),
     date: plan.date,
     type: plan.type,
+    weightUnit,
     startedAt: new Date().toISOString(),
     completedAt: null,
     exercises: plan.exercises.map(pe => ({

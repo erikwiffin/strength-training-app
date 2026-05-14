@@ -33,7 +33,7 @@ export function WorkoutSummaryCard({ workout, weightUnit, onClick }: WorkoutSumm
           <div className="text-right text-sm">
             {workout.exercises.map(e => (
               <div key={e.exerciseId}>
-                {e.label} {e.actualWeight}{weightUnit}
+                {e.label} {e.actualWeight}{workout.weightUnit ?? weightUnit}
               </div>
             ))}
           </div>

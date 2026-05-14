@@ -44,6 +44,7 @@ export interface WorkoutLog {
   id: string;
   date: string;
   type: WorkoutType;
+  weightUnit: WeightUnit;
   startedAt: string;
   completedAt: string | null;
   exercises: ExerciseLog[];
