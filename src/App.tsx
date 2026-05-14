@@ -1,9 +1,119 @@
+import { useState } from 'react';
+import type { View } from './types';
+import { useAppData } from './hooks/useAppData';
+import { planWorkout, createWorkoutLog } from './services/program';
+import { Header } from './components/layout/Header';
+import { BottomNav } from './components/layout/BottomNav';
+import { TodayView } from './components/today/TodayView';
+import { ActiveWorkoutView } from './components/workout/ActiveWorkoutView';
+import { HistoryView } from './components/history/HistoryView';
+import { WorkoutDetailView } from './components/history/WorkoutDetailView';
+import { SettingsView } from './components/settings/SettingsView';
+
 function App() {
+  const [view, setView] = useState<View>({ name: 'today' });
+  const { data, updateSettings, saveWorkoutLog, updateWorkoutLog, deleteWorkoutLog } = useAppData();
+
+  const plan = planWorkout(data.settings, data.workoutLogs);
+  const activeWorkout = data.workoutLogs.find(l => l.completedAt === null);
+  const showBottomNav = view.name === 'today' || view.name === 'history' || view.name === 'settings';
+
+  function handleStartWorkout() {
+    const log = createWorkoutLog(plan);
+    saveWorkoutLog(log);
+    setView({ name: 'active-workout', workoutLogId: log.id });
+  }
+
+  function handleResumeWorkout(id: string) {
+    setView({ name: 'active-workout', workoutLogId: id });
+  }
+
+  function handleFinishWorkout(id: string) {
+    updateWorkoutLog(id, log => ({
+      ...log,
+      completedAt: new Date().toISOString(),
+    }));
+    setView({ name: 'today' });
+  }
+
+  function renderView() {
+    switch (view.name) {
+      case 'today':
+        return (
+          <>
+            <Header title="Strength Training" />
+            <TodayView
+              plan={plan}
+              weightUnit={data.settings.weightUnit}
+              activeWorkout={activeWorkout}
+              onStartWorkout={handleStartWorkout}
+              onResumeWorkout={handleResumeWorkout}
+            />
+          </>
+        );
+      case 'active-workout': {
+        const workout = data.workoutLogs.find(l => l.id === view.workoutLogId);
+        if (!workout) {
+          setView({ name: 'today' });
+          return null;
+        }
+        return (
+          <ActiveWorkoutView
+            workout={workout}
+            weightUnit={data.settings.weightUnit}
+            exerciseConfigs={data.settings.exercises}
+            onUpdate={updater => updateWorkoutLog(workout.id, updater)}
+            onFinish={() => handleFinishWorkout(workout.id)}
+            onCancel={() => {
+              deleteWorkoutLog(workout.id);
+              setView({ name: 'today' });
+            }}
+          />
+        );
+      }
+      case 'history':
+        return (
+          <>
+            <Header title="History" />
+            <HistoryView
+              logs={data.workoutLogs.filter(l => l.completedAt !== null)}
+              weightUnit={data.settings.weightUnit}
+              onSelectWorkout={id => setView({ name: 'workout-detail', workoutLogId: id })}
+            />
+          </>
+        );
+      case 'workout-detail': {
+        const workout = data.workoutLogs.find(l => l.id === view.workoutLogId);
+        if (!workout) {
+          setView({ name: 'history' });
+          return null;
+        }
+        return (
+          <>
+            <Header title={`Workout ${workout.type}`} onBack={() => setView({ name: 'history' })} />
+            <WorkoutDetailView workout={workout} weightUnit={data.settings.weightUnit} />
+          </>
+        );
+      }
+      case 'settings':
+        return (
+          <>
+            <Header title="Settings" />
+            <SettingsView
+              settings={data.settings}
+              onUpdateSettings={updateSettings}
+            />
+          </>
+        );
+    }
+  }
+
   return (
-    <div className="max-w-[600px] mx-auto p-4">
-      <h1>Strength Training</h1>
+    <div className="max-w-[600px] mx-auto p-4 pb-20">
+      {renderView()}
+      {showBottomNav && <BottomNav current={view.name} onNavigate={setView} />}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
