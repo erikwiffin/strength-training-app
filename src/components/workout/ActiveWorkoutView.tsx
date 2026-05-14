@@ -7,6 +7,7 @@ import type {
 } from "../../types";
 import { Header } from "../layout/Header";
 import { ExerciseTracker } from "./ExerciseTracker";
+import { Screen } from "../layout/Screen";
 
 interface ActiveWorkoutViewProps {
   workout: WorkoutLog;
@@ -62,47 +63,43 @@ export function ActiveWorkoutView({
   }
 
   return (
-    <>
-      <div className="space-y-4">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold">Workout {workout.type}</h2>
-          <p className="text-sm opacity-70">
-            {new Date(workout.date).toLocaleDateString(undefined, {
-              weekday: "long",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
-        </div>
+    <Screen>
+      <Header
+        title={`Workout ${workout.type}`}
+        subtitle={new Date(workout.date).toLocaleDateString(undefined, {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+        })}
+      />
 
-        <div className="space-y-2">
-          {workout.exercises.map((exercise, index) => (
-            <ExerciseTracker
-              key={exercise.exerciseId}
-              exercise={exercise}
-              exerciseIndex={index}
-              weightUnit={weightUnit}
-              increment={exerciseConfigs[exercise.exerciseId].increment}
-              onSetUpdate={handleSetUpdate}
-              onWeightChange={handleWeightChange}
-            />
-          ))}
-        </div>
-
-        <button
-          className={`btn btn-block btn-lg ${allSetsCompleted ? "btn-success" : "btn-primary"}`}
-          onClick={onFinish}
-        >
-          Finish Workout
-        </button>
-
-        <button
-          className="btn btn-ghost btn-block btn-sm text-error"
-          onClick={() => setShowCancelConfirm(true)}
-        >
-          Cancel Workout
-        </button>
+      <div className="space-y-2">
+        {workout.exercises.map((exercise, index) => (
+          <ExerciseTracker
+            key={exercise.exerciseId}
+            exercise={exercise}
+            exerciseIndex={index}
+            weightUnit={weightUnit}
+            increment={exerciseConfigs[exercise.exerciseId].increment}
+            onSetUpdate={handleSetUpdate}
+            onWeightChange={handleWeightChange}
+          />
+        ))}
       </div>
+
+      <button
+        className={`btn btn-block btn-lg ${allSetsCompleted ? "btn-success" : "btn-primary"}`}
+        onClick={onFinish}
+      >
+        Finish Workout
+      </button>
+
+      <button
+        className="btn btn-ghost btn-block btn-sm text-error"
+        onClick={() => setShowCancelConfirm(true)}
+      >
+        Cancel Workout
+      </button>
 
       {showCancelConfirm && (
         <dialog className="modal modal-open">
@@ -128,6 +125,6 @@ export function ActiveWorkoutView({
           </form>
         </dialog>
       )}
-    </>
+    </Screen>
   );
 }

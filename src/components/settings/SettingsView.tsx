@@ -1,22 +1,33 @@
-import { useRef, useState } from 'react';
-import type { ExerciseConfig, ExerciseId, UserSettings } from '../../types';
-import { exportData, importData } from '../../services/storage';
-import { ExerciseSettingsCard } from './ExerciseSettingsCard';
+import { useRef, useState } from "react";
+import type { ExerciseConfig, ExerciseId, UserSettings } from "../../types";
+import { exportData, importData } from "../../services/storage";
+import { ExerciseSettingsCard } from "./ExerciseSettingsCard";
+import { Screen } from "../layout/Screen";
+import { Header } from "../layout/Header";
 
 interface SettingsViewProps {
   settings: UserSettings;
   onUpdateSettings: (patch: Partial<UserSettings>) => void;
 }
 
-const EXERCISE_ORDER: ExerciseId[] = ['squat', 'bench', 'ohp', 'deadlift', 'row'];
+const EXERCISE_ORDER: ExerciseId[] = [
+  "squat",
+  "bench",
+  "ohp",
+  "deadlift",
+  "row",
+];
 
-export function SettingsView({ settings, onUpdateSettings }: SettingsViewProps) {
+export function SettingsView({
+  settings,
+  onUpdateSettings,
+}: SettingsViewProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importError, setImportError] = useState<string | null>(null);
 
   function handleUnitChange() {
     onUpdateSettings({
-      weightUnit: settings.weightUnit === 'lb' ? 'kg' : 'lb',
+      weightUnit: settings.weightUnit === "lb" ? "kg" : "lb",
     });
   }
 
@@ -31,9 +42,9 @@ export function SettingsView({ settings, onUpdateSettings }: SettingsViewProps) 
 
   function handleExport() {
     const json = exportData();
-    const blob = new Blob([json], { type: 'application/json' });
+    const blob = new Blob([json], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `strength-training-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
@@ -54,33 +65,47 @@ export function SettingsView({ settings, onUpdateSettings }: SettingsViewProps) 
         setImportError(null);
         window.location.reload();
       } catch {
-        setImportError('Invalid backup file');
+        setImportError("Invalid backup file");
       }
     };
     reader.readAsText(file);
   }
 
   return (
-    <div className="space-y-6">
+    <Screen>
+      <Header title="Settings" />
+
       <div className="form-control">
         <label className="label cursor-pointer">
           <span className="label-text text-lg font-bold">Weight Unit</span>
           <div className="flex items-center gap-2">
-            <span className={settings.weightUnit === 'lb' ? 'font-bold' : 'opacity-50'}>lb</span>
+            <span
+              className={
+                settings.weightUnit === "lb" ? "font-bold" : "opacity-50"
+              }
+            >
+              lb
+            </span>
             <input
               type="checkbox"
               className="toggle"
-              checked={settings.weightUnit === 'kg'}
+              checked={settings.weightUnit === "kg"}
               onChange={handleUnitChange}
             />
-            <span className={settings.weightUnit === 'kg' ? 'font-bold' : 'opacity-50'}>kg</span>
+            <span
+              className={
+                settings.weightUnit === "kg" ? "font-bold" : "opacity-50"
+              }
+            >
+              kg
+            </span>
           </div>
         </label>
       </div>
 
-      <div className="space-y-3">
-        <h2 className="text-lg font-bold">Exercises</h2>
-        {EXERCISE_ORDER.map(id => (
+      <h2 className="text-lg font-bold">Exercises</h2>
+      <div className="space-y-2">
+        {EXERCISE_ORDER.map((id) => (
           <ExerciseSettingsCard
             key={id}
             config={settings.exercises[id]}
@@ -92,8 +117,8 @@ export function SettingsView({ settings, onUpdateSettings }: SettingsViewProps) 
 
       <div className="divider" />
 
-      <div className="space-y-3">
-        <h2 className="text-lg font-bold">Data</h2>
+      <h2 className="text-lg font-bold">Data</h2>
+      <div className="space-y-2">
         <div className="flex gap-3">
           <button className="btn btn-outline flex-1" onClick={handleExport}>
             Export Backup
@@ -115,6 +140,6 @@ export function SettingsView({ settings, onUpdateSettings }: SettingsViewProps) 
           </div>
         )}
       </div>
-    </div>
+    </Screen>
   );
 }

@@ -1,5 +1,7 @@
-import type { PlannedWorkout, WeightUnit, WorkoutLog } from '../../types';
-import { PlannedExerciseCard } from './PlannedExerciseCard';
+import type { PlannedWorkout, WeightUnit, WorkoutLog } from "../../types";
+import { Header } from "../layout/Header";
+import { Screen } from "../layout/Screen";
+import { PlannedExerciseCard } from "./PlannedExerciseCard";
 
 interface TodayViewProps {
   plan: PlannedWorkout;
@@ -9,22 +11,26 @@ interface TodayViewProps {
   onResumeWorkout: (id: string) => void;
 }
 
-export function TodayView({ plan, weightUnit, activeWorkout, onStartWorkout, onResumeWorkout }: TodayViewProps) {
+export function TodayView({
+  plan,
+  weightUnit,
+  activeWorkout,
+  onStartWorkout,
+  onResumeWorkout,
+}: TodayViewProps) {
   return (
-    <div className="space-y-4">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold">Workout {plan.type}</h2>
-        <p className="text-sm opacity-70">
-          {new Date(plan.date).toLocaleDateString(undefined, {
-            weekday: 'long',
-            month: 'long',
-            day: 'numeric',
-          })}
-        </p>
-      </div>
+    <Screen>
+      <Header
+        title={`Workout ${plan.type}`}
+        subtitle={new Date(plan.date).toLocaleDateString(undefined, {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+        })}
+      />
 
       <div className="space-y-2">
-        {plan.exercises.map(exercise => (
+        {plan.exercises.map((exercise) => (
           <PlannedExerciseCard
             key={exercise.exerciseId}
             exercise={exercise}
@@ -48,6 +54,6 @@ export function TodayView({ plan, weightUnit, activeWorkout, onStartWorkout, onR
           Start Workout
         </button>
       )}
-    </div>
+    </Screen>
   );
 }

@@ -1,26 +1,34 @@
-import type { WeightUnit, WorkoutLog } from '../../types';
+import type { WeightUnit, WorkoutLog } from "../../types";
+import { Header } from "../layout/Header";
+import { Screen } from "../layout/Screen";
 
 interface WorkoutDetailViewProps {
   workout: WorkoutLog;
   weightUnit: WeightUnit;
+  onBack: () => void;
 }
 
-export function WorkoutDetailView({ workout, weightUnit }: WorkoutDetailViewProps) {
+export function WorkoutDetailView({
+  workout,
+  weightUnit,
+  onBack,
+}: WorkoutDetailViewProps) {
   return (
-    <div className="space-y-4">
-      <div className="text-center">
-        <p className="text-sm opacity-70">
-          {new Date(workout.date).toLocaleDateString(undefined, {
-            weekday: 'long',
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-          })}
-        </p>
-      </div>
-
-      {workout.exercises.map(exercise => {
-        const allSuccess = exercise.sets.every(s => s.completed && s.reps >= 5);
+    <Screen>
+      <Header
+        title={`Workout ${workout.type}`}
+        subtitle={new Date(workout.date).toLocaleDateString(undefined, {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })}
+        onBack={onBack}
+      />
+      {workout.exercises.map((exercise) => {
+        const allSuccess = exercise.sets.every(
+          (s) => s.completed && s.reps >= 5,
+        );
         return (
           <div key={exercise.exerciseId} className="card bg-base-200">
             <div className="card-body p-3">
@@ -36,27 +44,28 @@ export function WorkoutDetailView({ workout, weightUnit }: WorkoutDetailViewProp
                     key={i}
                     className={`badge badge-lg ${
                       set.completed && set.reps >= 5
-                        ? 'badge-success'
+                        ? "badge-success"
                         : set.completed && set.reps > 0
-                          ? 'badge-warning'
+                          ? "badge-warning"
                           : set.completed
-                            ? 'badge-error'
-                            : 'badge-ghost'
+                            ? "badge-error"
+                            : "badge-ghost"
                     }`}
                   >
-                    {set.completed ? set.reps : '-'}
+                    {set.completed ? set.reps : "-"}
                   </div>
                 ))}
               </div>
               {!allSuccess && (
                 <p className="text-sm text-warning text-center">
-                  Weight will stay at {exercise.actualWeight} {weightUnit} next time
+                  Weight will stay at {exercise.actualWeight} {weightUnit} next
+                  time
                 </p>
               )}
             </div>
           </div>
         );
       })}
-    </div>
+    </Screen>
   );
 }
