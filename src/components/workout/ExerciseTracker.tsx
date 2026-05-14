@@ -21,14 +21,16 @@ export function ExerciseTracker({
 }: ExerciseTrackerProps) {
   return (
     <div className="card bg-base-200">
-      <div className="card-body p-4 space-y-3">
-        <h3 className="card-title text-base">{exercise.label}</h3>
-        <WeightInput
-          weight={exercise.actualWeight}
-          unit={weightUnit}
-          increment={increment}
-          onChange={weight => onWeightChange(exerciseIndex, weight)}
-        />
+      <div className="card-body p-3 space-y-2">
+        <div className="flex justify-between items-center">
+          <h3 className="card-title text-base">{exercise.label}</h3>
+          <WeightInput
+            weight={exercise.actualWeight}
+            unit={weightUnit}
+            increment={increment}
+            onChange={weight => onWeightChange(exerciseIndex, weight)}
+          />
+        </div>
         <div className="flex gap-2 justify-center flex-wrap">
           {exercise.sets.map((set, setIndex) => (
             <SetButton

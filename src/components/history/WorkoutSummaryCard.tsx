@@ -13,7 +13,7 @@ export function WorkoutSummaryCard({ workout, weightUnit, onClick }: WorkoutSumm
 
   return (
     <button className="card bg-base-200 w-full text-left" onClick={onClick}>
-      <div className="card-body p-4">
+      <div className="card-body p-3">
         <div className="flex justify-between items-center">
           <div>
             <h3 className="font-bold">

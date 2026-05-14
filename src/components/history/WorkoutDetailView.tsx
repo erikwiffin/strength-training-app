@@ -23,7 +23,7 @@ export function WorkoutDetailView({ workout, weightUnit }: WorkoutDetailViewProp
         const allSuccess = exercise.sets.every(s => s.completed && s.reps >= 5);
         return (
           <div key={exercise.exerciseId} className="card bg-base-200">
-            <div className="card-body p-4">
+            <div className="card-body p-3">
               <div className="flex justify-between items-center">
                 <h3 className="card-title text-base">{exercise.label}</h3>
                 <span className="text-lg font-bold">

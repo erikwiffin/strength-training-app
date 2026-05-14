@@ -1,7 +1,12 @@
-import { useState } from 'react';
-import type { ExerciseConfig, ExerciseId, WeightUnit, WorkoutLog } from '../../types';
-import { Header } from '../layout/Header';
-import { ExerciseTracker } from './ExerciseTracker';
+import { useState } from "react";
+import type {
+  ExerciseConfig,
+  ExerciseId,
+  WeightUnit,
+  WorkoutLog,
+} from "../../types";
+import { Header } from "../layout/Header";
+import { ExerciseTracker } from "./ExerciseTracker";
 
 interface ActiveWorkoutViewProps {
   workout: WorkoutLog;
@@ -12,15 +17,27 @@ interface ActiveWorkoutViewProps {
   onCancel: () => void;
 }
 
-export function ActiveWorkoutView({ workout, weightUnit, exerciseConfigs, onUpdate, onFinish, onCancel }: ActiveWorkoutViewProps) {
+export function ActiveWorkoutView({
+  workout,
+  weightUnit,
+  exerciseConfigs,
+  onUpdate,
+  onFinish,
+  onCancel,
+}: ActiveWorkoutViewProps) {
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
-  const allSetsCompleted = workout.exercises.every(e =>
-    e.sets.every(s => s.completed),
+  const allSetsCompleted = workout.exercises.every((e) =>
+    e.sets.every((s) => s.completed),
   );
 
-  function handleSetUpdate(exerciseIndex: number, setIndex: number, reps: number, completed: boolean) {
-    onUpdate(log => ({
+  function handleSetUpdate(
+    exerciseIndex: number,
+    setIndex: number,
+    reps: number,
+    completed: boolean,
+  ) {
+    onUpdate((log) => ({
       ...log,
       exercises: log.exercises.map((e, ei) =>
         ei === exerciseIndex
@@ -36,7 +53,7 @@ export function ActiveWorkoutView({ workout, weightUnit, exerciseConfigs, onUpda
   }
 
   function handleWeightChange(exerciseIndex: number, weight: number) {
-    onUpdate(log => ({
+    onUpdate((log) => ({
       ...log,
       exercises: log.exercises.map((e, ei) =>
         ei === exerciseIndex ? { ...e, actualWeight: weight } : e,
@@ -46,22 +63,34 @@ export function ActiveWorkoutView({ workout, weightUnit, exerciseConfigs, onUpda
 
   return (
     <>
-      <Header title={`Workout ${workout.type}`} />
       <div className="space-y-4">
-        {workout.exercises.map((exercise, index) => (
-          <ExerciseTracker
-            key={exercise.exerciseId}
-            exercise={exercise}
-            exerciseIndex={index}
-            weightUnit={weightUnit}
-            increment={exerciseConfigs[exercise.exerciseId].increment}
-            onSetUpdate={handleSetUpdate}
-            onWeightChange={handleWeightChange}
-          />
-        ))}
+        <div className="text-center">
+          <h2 className="text-2xl font-bold">Workout {workout.type}</h2>
+          <p className="text-sm opacity-70">
+            {new Date(workout.date).toLocaleDateString(undefined, {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+            })}
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          {workout.exercises.map((exercise, index) => (
+            <ExerciseTracker
+              key={exercise.exerciseId}
+              exercise={exercise}
+              exerciseIndex={index}
+              weightUnit={weightUnit}
+              increment={exerciseConfigs[exercise.exerciseId].increment}
+              onSetUpdate={handleSetUpdate}
+              onWeightChange={handleWeightChange}
+            />
+          ))}
+        </div>
 
         <button
-          className={`btn btn-block btn-lg ${allSetsCompleted ? 'btn-success' : 'btn-primary'}`}
+          className={`btn btn-block btn-lg ${allSetsCompleted ? "btn-success" : "btn-primary"}`}
           onClick={onFinish}
         >
           Finish Workout
@@ -79,9 +108,14 @@ export function ActiveWorkoutView({ workout, weightUnit, exerciseConfigs, onUpda
         <dialog className="modal modal-open">
           <div className="modal-box">
             <h3 className="font-bold text-lg">Cancel workout?</h3>
-            <p className="py-4">This will delete all progress for this workout.</p>
+            <p className="py-4">
+              This will delete all progress for this workout.
+            </p>
             <div className="modal-action">
-              <button className="btn" onClick={() => setShowCancelConfirm(false)}>
+              <button
+                className="btn"
+                onClick={() => setShowCancelConfirm(false)}
+              >
                 Keep Going
               </button>
               <button className="btn btn-error" onClick={onCancel}>

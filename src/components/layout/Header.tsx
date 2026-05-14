@@ -5,7 +5,7 @@ interface HeaderProps {
 
 export function Header({ title, onBack }: HeaderProps) {
   return (
-    <div className="navbar bg-base-100 sticky top-0 z-10">
+    <div className="navbar bg-base-100 sticky top-0 z-10 min-h-12">
       {onBack && (
         <div className="navbar-start">
           <button className="btn btn-ghost btn-sm" onClick={onBack}>
