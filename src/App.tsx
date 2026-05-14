@@ -1,8 +1,6 @@
-import './App.css'
-
 function App() {
   return (
-    <div className="app">
+    <div className="max-w-[600px] mx-auto p-4">
       <h1>Strength Training</h1>
     </div>
   )
