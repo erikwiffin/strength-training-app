@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  base: '/strength-training-app/',
   server: {
     allowedHosts: true,
   },
@@ -25,8 +26,8 @@ export default defineConfig({
         theme_color: '#1a1a2e',
         background_color: '#1a1a2e',
         display: 'standalone',
-        scope: '/',
-        start_url: '/',
+        scope: '/strength-training-app/',
+        start_url: '/strength-training-app/',
         icons: [
           {
             src: 'pwa-192x192.png',
