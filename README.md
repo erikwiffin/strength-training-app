@@ -1,73 +1,35 @@
-# React + TypeScript + Vite
+# Strength Training App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A progressive web app for tracking barbell strength workouts using an A/B split with automatic weight progression.
 
-Currently, two official plugins are available:
+## Live App
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+[![QR Code](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://erikwiffin.github.io/strength-training-app/)](https://erikwiffin.github.io/strength-training-app/)
 
-## React Compiler
+**https://erikwiffin.github.io/strength-training-app/**
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Features
 
-## Expanding the ESLint configuration
+- **A/B workout split** — alternates between two routines each session
+- **Progressive overload** — automatically calculates next target weight based on your last performance
+- **Live workout tracking** — log reps per set, adjust weight on the fly, resume interrupted sessions
+- **Workout history** — review all past sessions and individual exercise performance
+- **Flexible units** — switch between pounds and kilograms; all weights convert automatically
+- **Data portability** — export and import your full workout history as JSON
+- **PWA** — installable on mobile for a native app feel, works offline
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Workout Program
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+| | Workout A | Workout B |
+|---|---|---|
+| **Exercise 1** | Squat | Squat |
+| **Exercise 2** | Bench Press | Overhead Press |
+| **Exercise 3** | Barbell Row | Deadlift |
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Sessions alternate A → B → A → B. Each exercise targets 3 sets of 5 reps. If you complete all sets successfully, the weight increases next session. If not, the weight stays the same.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Stack
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- React 19 + TypeScript + Vite 8
+- Tailwind CSS v4 + DaisyUI v5
+- PWA via vite-plugin-pwa
